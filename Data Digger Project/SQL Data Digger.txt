@@ -1,0 +1,210 @@
+- Create Database
+CREATE DATABASE datadigger;
+
+-----Customers Table-----
+
+- Create Table
+CREATE TABLE customers(
+    Customer_id INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Email VARCHAR(100),
+    Address VARCHAR(200)
+);
+
+
+- Insert 5 Values
+INSERT INTO customers
+VALUES
+(101, 'Alice', 'alice@gmail.com', 'Ahmedabad'),
+(102, 'Bob', 'bob@gmail.com', 'Mumbai'),
+(103, 'Charlie', 'charlie@gmail.com', 'Delhi'),
+(104, 'David', 'david@gmail.com', 'Pune'),
+(105, 'Eva', 'eva@gmail.com', 'Jaipur');
+
+
+
+- Retrieve Customer Details
+SELECT * FROM customers;
+
+
+- Update Customer's Address
+UPDATE customers
+SET Address = 'Surat'
+WHERE Customer_id = 101;
+
+
+- Delete Record 
+DELETE FROM customers
+WHERE Customer_id = 102;
+
+
+- Display Name with Alice
+SELECT * FROM customers
+WHERE Name = 'Alice';
+
+
+
+
+
+
+-----Orders Table-----
+
+- Create orders table
+CREATE TABLE orders(
+    Order_id INT PRIMARY KEY,
+    Customer_id INT,
+    Order_date DATE,
+    Total_amount Decimal(10,2),
+    FOREIGN KEY (Customer_id) REFERENCES customers(Customer_id)
+);
+
+
+
+- Insert values
+INSERT INTO Orders
+VALUES
+(201, 101, '2026-06-01', 1500.00),
+(202, 103, '2026-06-05', 2200.50),
+(203, 101, '2026-06-10', 800.00),
+(204, 104, '2026-06-12', 3500.75),
+(205, 105, '2026-06-15', 1200.25);
+
+
+
+- Retrieve specific customer data
+SELECT * FROM orders
+WHERE customer_id = 101;
+
+
+
+- Update Order total amount
+UPDATE orders
+SET Total_amount = 1800.00
+WHERE Order_id = 201;
+
+
+
+- Delete Orders
+DELETE FROM orders
+WHERE Order_id = 205;
+
+
+
+- Orders placed in 30 days
+SELECT * FROM orders
+WHERE Order_date >= CURDATE() - INTERVAL 30 DAY;
+
+
+- Highest, Lowest, Avg Amount
+SELECT
+MAX(Total_amount) AS Highest_Order,
+MIN(Total_amount) AS Lowest_Order,
+AVG(Total_amount) AS Average_Order
+FROM orders;
+
+
+-----Products Table-----
+
+- Create table
+CREATE TABLE Products(
+    Product_id INT PRIMARY KEY,
+    Product_name VARCHAR(100),
+    Price Decimal(10,2),
+    Stock INT
+);
+
+
+
+- Insert Values
+INSERT INTO Products 
+VALUES
+(1, 'Laptop', 55000.00, 10),
+(2, 'Mouse', 800.00, 50),
+(3, 'Keyboard', 1500.00, 25),
+(4, 'Headphones', 2500.00, 0),
+(5, 'Pendrive', 700.00, 40);
+
+
+- Retrieve product with price descending
+SELECT * FROM products
+ORDER BY Price DESC;
+
+
+- Set price of product
+UPDATE products
+SET Price = 900.00
+WHERE Product_id = 2;
+
+
+- Delete Price where products 0
+DELETE FROM products
+WHERE Stock = 0;
+
+
+
+- Price b/w 500-2000
+SELECT * FROM products
+WHERE Price BETWEEN 500 AND 2000;
+
+
+
+- Highest Price and Lowest Price
+SELECT
+MAX(Price) AS Highest_Price,
+MIN(Price) AS Lowest_Price
+FROM products;
+
+
+
+
+
+-----OrderDetails Table-----
+
+- Create Table
+CREATE TABLE orderdetails(
+    OrderDetailID INT PRIMARY KEY,
+    Order_id INT,
+    Product_id INT,
+    Quantity INT,
+    Subtotal Decimal(10,2),
+    FOREIGN KEY(Order_id) REFERENCES orders(Order_id),
+    FOREIGN KEY(Product_id) REFERENCES products(product_id)
+);
+
+
+
+- Insert Values
+INSERT INTO OrderDetails
+VALUES
+(1, 201, 1, 1, 55000.00),
+(2, 202, 2, 2, 1600.00),
+(3, 203, 3, 3, 4500.00),
+(4, 204, 5, 5, 3500.00),
+(5, 201, 2, 1, 800.00);
+
+
+
+- Retrieve Product based on ID
+SELECT * FROM orderdetails
+WHERE Order_id = 201;
+
+
+- Calculate Sum
+SELECT SUM(Subtotal) AS Total_Revenue
+FROM orderdetails;
+
+
+- Top 3 most Ordered
+SELECT Product_id,
+SUM(Quantity) AS Total_Ordered
+FROM orderdetails
+GROUP BY Product_id
+ORDER BY Total_Ordered DESC
+LIMIT 3;
+
+
+
+- Specific Product Count as Sold
+SELECT COUNT(*) AS Times_Sold
+FROM orderdetails
+WHERE Product_id = 2;
